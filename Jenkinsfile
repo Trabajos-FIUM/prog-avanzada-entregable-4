@@ -14,12 +14,24 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests=false'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn clean package -DskipTests=false'
+                    } else {
+                        bat 'mvn clean package -DskipTests=false'
+                    }
+                }
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn test'
+                script {
+                    if (isUnix()) {
+                        sh 'mvn test'
+                    } else {
+                        bat 'mvn test'
+                    }
+                }
             }
             post {
                 always {
