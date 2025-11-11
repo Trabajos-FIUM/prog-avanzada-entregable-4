@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Playlist</title>
+    <style>
+        body { font-family: Arial; margin: 2rem; }
+        form, ul { margin-top: 1rem; }
+        iframe { width: 300px; height: 180px; display:block; margin-top:0.5rem; }
+    </style>
+</head>
+<body>
+<h1>🎵 Mi Playlist</h1>
+
+<form action="/add" method="post">
+    <input name="title" placeholder="Título" required>
+    <input name="url" placeholder="Link de YouTube" size="40" required>
+    <button type="submit">Agregar</button>
+</form>
+
+<ul>
+    <li th:each="v : ${videos}">
+        <h3 th:text="${v.title}"></h3>
+        <iframe th:src="${v.url}" frameborder="0" allowfullscreen></iframe>
+        <p>❤️ Likes: <span th:text="${v.likes}"></span> |
+            ⭐ Favorito: <span th:text="${v.favorite}"></span></p>
+
+        <form th:action="@{'/like/' + ${v.id}}" method="post"><button>Like</button></form>
+        <form th:action="@{'/fav/' + ${v.id}}" method="post"><button>Fav</button></form>
+        <form th:action="@{'/delete/' + ${v.id}}" method="post"><button>Eliminar</button></form>
+    </li>
+</ul>
+</body>
+</html>
