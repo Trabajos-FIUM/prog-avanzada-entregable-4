@@ -29,11 +29,14 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Starting Spring Boot...'
+                echo 'Starting Spring Boot in background...'
 
                 bat """
                 cd C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\mi-playlist-pipeline
-                java -jar target\\playlist-pipeline-0.0.1-SNAPSHOT.jar
+
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8080"') do taskkill /PID %%a /F
+
+                start "" /MIN cmd /c "java -jar target\\playlist-pipeline-0.0.1-SNAPSHOT.jar > app.log 2>&1"
                 """
             }
         }
