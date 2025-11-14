@@ -31,8 +31,8 @@ pipeline {
         stage('Docker Stop Running') {
             steps {
                 bat """
-                docker stop playlist-pipeline || true
-                docker rm playlist-pipeline || true
+                docker stop playlist-pipeline 2>NUL
+                docker rm playlist-pipeline 2>NUL
                 """
             }
         }
