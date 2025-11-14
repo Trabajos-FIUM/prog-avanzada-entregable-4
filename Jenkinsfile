@@ -8,50 +8,50 @@ pipeline {
 
     stages {
 
-        stage('Kill Old Java') {
-            steps {
-                script {
-                    if (isUnix()) {
-                        sh "fuser -k 8080/tcp || true"
-                    } else {
-                        bat """
-                        echo Killing ALL Java processes...
-                        taskkill /F /IM java.exe 2>nul || echo No java running
-                        """
-                    }
-                }
-            }
-        }
-
         stage('Checkout') {
             steps { checkout scm }
         }
 
+        stage('Kill old 8080 process') {
+            steps {
+                bat """
+                echo Checking port 8080...
+                for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8080"') do (
+                    echo Killing PID %%a
+                    taskkill /PID %%a /F
+                )
+                """
+            }
+        }
+
         stage('Build') {
             steps {
-                script {
-                    if (isUnix()) { sh 'mvn clean package -DskipTests=false' }
-                    else { bat 'mvn clean package -DskipTests=false' }
-                }
+                bat 'mvn clean package -DskipTests'
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    if (isUnix()) { sh 'mvn test' }
-                    else { bat 'mvn test' }
+                bat 'mvn test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
                 }
             }
-            post { always { junit '**/target/surefire-reports/*.xml' } }
         }
 
-        stage('Deploy') {
+        stage('Deploy - Start JAR') {
             steps {
-                script {
-                    if (isUnix()) { sh 'bash scripts/deploy_mac.sh' }
-                    else { bat 'scripts\\deploy_windows.bat' }
-                }
+                bat """
+                echo Starting Spring Boot app...
+                start "" /B cmd /c "java -jar target\\playlist-pipeline-0.0.1-SNAPSHOT.jar > app.log 2>&1"
+                timeout /t 3 >nul
+                echo ======================================
+                echo App running at http://localhost:8080
+                echo Logs: C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\mi-playlist-pipeline\\app.log
+                echo ======================================
+                """
             }
         }
     }
