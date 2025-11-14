@@ -8,17 +8,10 @@ pipeline {
 
     stages {
 
-        stage('Kill 8080') {
-            steps {
-                bat """
-                for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8080"') do taskkill /PID %%a /F
-                exit /b 0
-                """
-            }
-        }
-
         stage('Checkout') {
-            steps { checkout scm }
+            steps {
+                checkout scm
+            }
         }
 
         stage('Build') {
@@ -27,25 +20,27 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Docker Build') {
             steps {
-                echo "Starting Spring Boot in background..."
-
                 bat """
-                cd C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\mi-playlist-pipeline
+                docker build -t playlist-pipeline:latest .
+                """
+            }
+        }
 
-                echo Checking port 8080...
+        stage('Docker Stop Running') {
+            steps {
+                bat """
+                docker stop playlist-pipeline || true
+                docker rm playlist-pipeline || true
+                """
+            }
+        }
 
-                for /F "tokens=5" %%a in ('netstat -ano ^| findstr ":8080"') do (
-                    if NOT %%a==0 (
-                        echo Killing PID %%a
-                        taskkill /PID %%a /F
-                    )
-                )
-
-                echo Starting new instance...
-
-                start "" /MIN cmd /c "java -jar target\\playlist-pipeline-0.0.1-SNAPSHOT.jar > app.log 2>&1"
+        stage('Docker Run') {
+            steps {
+                bat """
+                docker run -d --name playlist-pipeline -p 8080:8080 playlist-pipeline:latest
                 """
             }
         }
