@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fragments</title>
+</head>
+
+<body>
+
+    <!-- Navbar fragment -->
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">My Playlist</a>
+            <div>
+                <a class="btn btn-outline-light" href="/add">Add video</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Scripts fragment -->
+    <div th:fragment="scripts">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
+
+</body>
+
+</html>

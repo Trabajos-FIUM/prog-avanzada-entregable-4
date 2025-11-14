@@ -2,7 +2,6 @@ package com.progavanzada.playlistpipeline.controller;
 
 import com.progavanzada.playlistpipeline.service.VideoService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -11,12 +10,6 @@ public class PlaylistController {
 
     public PlaylistController(VideoService service) {
         this.service = service;
-    }
-
-    @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("videos", service.all());
-        return "index";
     }
 
     @PostMapping("/add")
@@ -43,4 +36,3 @@ public class PlaylistController {
         return "redirect:/";
     }
 }
-

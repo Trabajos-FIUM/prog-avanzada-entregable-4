@@ -1,0 +1,28 @@
+/* Simple attractive styles for the playlist app */
+body {
+  background: #f8f9fa;
+  color: #212529;
+}
+.navbar-brand { font-weight: 600; }
+.video-card { box-shadow: 0 6px 18px rgba(0,0,0,0.06); border-radius: 8px; overflow: hidden; }
+.video-card .card-body { padding: 16px; }
+.card-title { font-size: 1.05rem; margin-bottom: 4px; }
+.card-text { font-size: 0.85rem; color: #6c757d; }
+.btn-sm { padding: .25rem .5rem; }
+.favorite-badge { color: #fff; background: #ffc107; padding: 2px 8px; border-radius: 999px; font-weight: 600; }
+.search-bar { max-width: 480px; }
+.empty-state { text-align: center; padding: 40px 0; }
+@media (max-width: 767px) {
+  .video-card .col-5, .video-card .col-7 { flex: 0 0 100%; max-width: 100%; }
+  .video-card iframe { height: 180px; }
+}
+
+/* Small hover effect */
+.video-card:hover { transform: translateY(-3px); transition: transform .15s ease-in-out; }
+
+/* Make iframe rounded on left column */
+.video-card iframe { border: 0; }
+
+/* Controls spacing */
+.controls { gap: 8px; display: flex; align-items: center; }
+
