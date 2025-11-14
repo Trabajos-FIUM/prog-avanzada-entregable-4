@@ -8,25 +8,29 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps { checkout scm }
-        }
-
-        stage('Kill old 8080 process') {
+        stage('Kill 8080') {
             steps {
                 bat """
                 echo Checking port 8080...
+
                 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8080"') do (
                     echo Killing PID %%a
                     taskkill /PID %%a /F
                 )
+
+                rem --- prevent Jenkins from failing if nothing was killed ---
+                exit /b 0
                 """
             }
         }
 
+        stage('Checkout') {
+            steps { checkout scm }
+        }
+
         stage('Build') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                bat 'mvn clean package -DskipTests=false'
             }
         }
 
@@ -41,16 +45,17 @@ pipeline {
             }
         }
 
-        stage('Deploy - Start JAR') {
+        stage('Deploy') {
             steps {
                 bat """
-                echo Starting Spring Boot app...
+                echo Starting Spring Boot App...
+
                 start "" /B cmd /c "java -jar target\\playlist-pipeline-0.0.1-SNAPSHOT.jar > app.log 2>&1"
-                timeout /t 3 >nul
-                echo ======================================
-                echo App running at http://localhost:8080
-                echo Logs: C:\\ProgramData\\Jenkins\\.jenkins\\workspace\\mi-playlist-pipeline\\app.log
-                echo ======================================
+
+                echo ============================================
+                echo App launched at http://localhost:8080
+                echo Logs in workspace/app.log
+                echo ============================================
                 """
             }
         }
