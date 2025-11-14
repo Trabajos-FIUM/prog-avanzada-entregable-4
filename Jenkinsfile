@@ -37,7 +37,12 @@ pipeline {
 
         stage('Docker Run') {
             steps {
-                bat "docker run -d --name playlist-pipeline -p 8080:8080 playlist-pipeline:latest"
+                bat """
+                docker run -d --name playlist-pipeline ^
+                  -p 8080:8080 ^
+                  -v C:/h2-data:/app/data ^
+                  playlist-pipeline:latest
+                """
             }
         }
     }
