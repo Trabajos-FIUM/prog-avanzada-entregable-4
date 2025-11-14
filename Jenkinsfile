@@ -22,28 +22,23 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat """
-                docker build -t playlist-pipeline:latest .
-                """
+                bat "docker build -t playlist-pipeline:latest ."
             }
         }
 
         stage('Docker Stop Running') {
             steps {
                 bat """
-                docker stop playlist-pipeline 2>NUL
-                docker rm playlist-pipeline 2>NUL
+                docker stop playlist-pipeline 2>NUL || exit 0
+                docker rm playlist-pipeline 2>NUL || exit 0
                 """
             }
         }
 
         stage('Docker Run') {
             steps {
-                bat """
-                docker run -d --name playlist-pipeline -p 8080:8080 playlist-pipeline:latest
-                """
+                bat "docker run -d --name playlist-pipeline -p 8080:8080 playlist-pipeline:latest"
             }
         }
-
     }
 }
