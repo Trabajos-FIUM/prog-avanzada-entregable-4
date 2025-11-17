@@ -14,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Build & Test') {
+        stage('Build') {
             steps {
                 bat 'mvn clean package -DskipTests=false'
             }
@@ -35,42 +35,32 @@ pipeline {
             }
         }
 
-        stage('Deploy Windows') {
-            when {
-                expression { isWindows() }
-            }
+        stage('Docker Run') {
             steps {
                 bat """
-                if not exist h2-data mkdir h2-data
                 docker run -d --name playlist-pipeline ^
                   -p 8080:8080 ^
-                  -v %cd%\\h2-data:/app/data ^
+                  -v C:/h2-data:/app/data ^
                   playlist-pipeline:latest
                 """
-            }
-        }
-
-        stage('Deploy Mac/Linux') {
-            when {
-                expression { !isWindows() }
-            }
-            steps {
-                sh '''
-                mkdir -p h2-data
-                docker stop playlist-pipeline 2>/dev/null || true
-                docker rm playlist-pipeline 2>/dev/null || true
-
-                docker run -d --name playlist-pipeline \
-                  -p 8080:8080 \
-                  -v $(pwd)/h2-data:/app/data \
-                  playlist-pipeline:latest
-                '''
             }
         }
     }
 }
 
-// Helper
-def isWindows() {
-    return java.lang.System.getProperty('os.name').toLowerCase().contains('win')
-}
+
+/*
+# Script equivalente para Mac/Linux (solo documentación para el entregable)
+
+sh '''
+mkdir -p h2-data
+
+docker stop playlist-pipeline 2>/dev/null || true
+docker rm playlist-pipeline 2>/dev/null || true
+
+docker run -d --name playlist-pipeline \
+  -p 8080:8080 \
+  -v $(pwd)/h2-data:/app/data \
+  playlist-pipeline:latest
+'''
+*/
