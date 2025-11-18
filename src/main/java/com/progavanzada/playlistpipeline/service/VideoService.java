@@ -23,15 +23,15 @@ public class VideoService {
     }
 
     // cambios code smells
-//    private String extractVideoId(String url) {
-//        if (url.contains("watch?v=")) {
-//            return url.split("watch\\?v=")[1].split("&")[0];
-//        }
-//        if (url.contains("youtu.be/")) {
-//            return url.split("youtu.be/")[1].split("\\?")[0];
-//        }
-//        return null;
-//    }
+    private String extractVideoId(String url) {
+        if (url.contains("watch?v=")) {
+            return url.split("watch\\?v=")[1].split("&")[0];
+        }
+        if (url.contains("youtu.be/")) {
+            return url.split("youtu.be/")[1].split("\\?")[0];
+        }
+        return null;
+    }
 
 
     public void add(String title, String url) {
@@ -44,15 +44,15 @@ public class VideoService {
             throw new IllegalArgumentException("El link debe ser de YouTube");
         }
         // cambios code smells
-//        String videoId = extractVideoId(url);
+        String videoId = extractVideoId(url);
 
-        String videoId = null;
-
-        if (url.contains("watch?v=")) {
-            videoId = url.split("watch\\?v=")[1].split("&")[0];
-        } else if (url.contains("youtu.be/")) {
-            videoId = url.split("youtu.be/")[1].split("\\?")[0];
-        }
+//        String videoId = null;
+//
+//        if (url.contains("watch?v=")) {
+//            videoId = url.split("watch\\?v=")[1].split("&")[0];
+//        } else if (url.contains("youtu.be/")) {
+//            videoId = url.split("youtu.be/")[1].split("\\?")[0];
+//        }
 
         if (videoId == null || videoId.isEmpty()) {
             throw new IllegalArgumentException("No se pudo obtener el ID del video de YouTube");
